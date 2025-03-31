@@ -24,6 +24,10 @@ class Base(AsyncAttrs, DeclarativeBase):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-async def get_db():
+async def init_db():
+  async with engine.begin() as conn:
+    await conn.run_sync(Base.metadata.create_all)
+
+async def get_db_session():
     async with async_session_maker() as session:
       yield session

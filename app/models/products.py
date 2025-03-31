@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
+
 from app.database import Base, int_pk, str_uniq
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, String, Float
-from app.models.categories import Category
-from app.models.brands import Brand
-from app.models.images import Image
+
+if TYPE_CHECKING:
+  from app.models.categories import Category
+  from app.models.brands import Brand
+  from app.models.images import Image
 
 class Product(Base):
   __tablename__ = "products"
@@ -15,6 +19,6 @@ class Product(Base):
   category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
   brand_id: Mapped[int] = mapped_column(ForeignKey("brands.id"))
 
-  category: Mapped[Category] = relationship(back_populates="products")
-  brand: Mapped[Brand] = relationship(back_populates="products")
-  images: Mapped[list[Image]] = relationship(back_populates="product")
+  category: Mapped["Category"] = relationship(backref="products")
+  brand: Mapped["Brand"] = relationship(backref="products")
+  images: Mapped[list["Image"]] = relationship(backref="product")

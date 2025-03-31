@@ -13,6 +13,10 @@ from os.path import dirname, abspath
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 from app.database import DATABASE_URL, Base
+from app.models.products import Product
+from app.models.categories import Category
+from app.models.brands import Brand
+from app.models.images import Image
 
 
 config = context.config
