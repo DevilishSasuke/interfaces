@@ -19,6 +19,6 @@ class Product(Base):
   category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
   brand_id: Mapped[int] = mapped_column(ForeignKey("brands.id"))
 
-  category: Mapped["Category"] = relationship(backref="products")
-  brand: Mapped["Brand"] = relationship(backref="products")
-  images: Mapped[list["Image"]] = relationship(backref="product")
+  images: Mapped[list["Image"]] = relationship("Image", back_populates="product")
+  category: Mapped["Category"] = relationship("Category", back_populates="products")
+  brand: Mapped["Brand"] = relationship("Brand", back_populates="products")

@@ -13,4 +13,4 @@ class Category(Base):
   id: Mapped[int_pk]
   name: Mapped[str_uniq] = mapped_column(String(63))
 
-  products: Mapped[list["Product"]] = relationship(back_populates="category")
+  products: Mapped[list["Product"]] = relationship("Product", back_populates="category")
