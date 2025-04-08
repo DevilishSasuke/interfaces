@@ -24,13 +24,14 @@ async def add_new_product(product: ProductAdd, db: AsyncSession = Depends(get_db
 
 @router.put("/", summary="update product")
 async def update_product(product: ProductUpd, db: AsyncSession = Depends(get_db_session)) -> ProductS:
-  db_product = await db.get(Product, product,id)
+  db_product = await db.get(Product, product.id)
 
   if not db_product:
     raise HTTPException(status_code=404, detail="no such a product, can't update")
   
   for field, value in product.model_dump().items():
-    setattr(product, field, value)
+    if field != "id":
+      setattr(db_product, field, value)
 
   await db.commit()
   await db.refresh(db_product)
@@ -39,10 +40,11 @@ async def update_product(product: ProductUpd, db: AsyncSession = Depends(get_db_
 @router.delete("/{product_id}", summary="delete some product")
 async def delete_product(product_id: int, db: AsyncSession = Depends(get_db_session)):
   db_product = await db.get(Product, product_id)
+  product_name = db_product.name
 
   if not db_product:
     raise HTTPException(status_code=404, detail="no such a product, can't update")
   
   await db.delete(db_product)
   await db.commit()
-  return {"detail": "Product deleted"}
+  return {"detail": f"Product {product_name} with id {product_id} deleted"}
