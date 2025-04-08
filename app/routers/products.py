@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from typing import Annotated
 
 from app.database import get_db_session
 from app.schemas.products import *
@@ -9,7 +10,32 @@ from app.models.products import Product
 
 router = APIRouter(prefix='/products', tags=["Products"])
 
-@router.get("/", summary="get all products")
+@router.get("/", summary="get products with pagination and search")
+async def get_products(db: AsyncSession = Depends(get_db_session),
+                        name: Annotated[str | None, Query(max_length=50)] = None,
+                        min_price: Annotated[float | None, Query(ge=0)] = None,
+                        max_price: Annotated[float | None, Query(ge=0)] = None,
+                        skip: Annotated[int, Query(ge=0)] = 0,
+                        limit: Annotated[int, Query(ge=1, le=50)] = 10,
+                        ) -> list[ProductS]:
+    
+  query = select(Product)
+
+  if name:
+    query = query.where(Product.name.ilike(f"%{name}%"))
+
+  if min_price:
+    query = query.where(Product.price >= min_price)
+
+  if max_price:
+    query = query.where(Product.price <= max_price)
+
+  query = query.limit(limit).offset(skip)
+
+  result = await db.execute(query)
+  return result.scalars().all()
+
+@router.get("/all", summary="get all products")
 async def get_all_products(db: AsyncSession = Depends(get_db_session)) -> list[ProductS]:
   result = await db.execute(select(Product))
   return result.scalars().all()
