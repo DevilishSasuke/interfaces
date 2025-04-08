@@ -1,15 +1,15 @@
 from pydantic import BaseModel, ConfigDict
 
-class ImageS(BaseModel):
+class ImageBase(BaseModel):
+  path: str
+  product_id: int
+
+class ImageS(ImageBase):
   model_config = ConfigDict(from_attributes=True)
   id: int
-  path: str
 
-class ImageAdd(BaseModel):
-  path: str
+class ImageAdd(ImageBase):
+  pass
 
-class ImageUpd(BaseModel):
-  path: str
-
-class ImageDel(BaseModel):
+class ImageUpd(ImageBase):
   id: int

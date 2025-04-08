@@ -1,15 +1,17 @@
 from pydantic import BaseModel, ConfigDict
 
-class BrandS(BaseModel):
+class BrandBase(BaseModel):
+  name: str
+
+class BrandS(BrandBase):
   model_config = ConfigDict(from_attributes=True)
   id: int
-  name: str
 
-class BrandAdd(BaseModel):
-  name: str
+class BrandAdd(BrandBase):
+  pass
 
-class BrandUpd(BaseModel):
-  name: str
-
-class BrandDel(BaseModel):
+class BrandUpd(BrandBase):
   id: int
+
+class CategoryBase(BaseModel):
+  name: str
