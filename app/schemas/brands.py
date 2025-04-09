@@ -12,6 +12,3 @@ class BrandAdd(BrandBase):
 
 class BrandUpd(BrandBase):
   id: int
-
-class CategoryBase(BaseModel):
-  name: str
