@@ -5,6 +5,8 @@ from sqlalchemy import select
 from app.database import get_db_session
 from app.models.users import User
 from app.config import Settings
+from app.auth.jwt import decode_access_token, decode_refresh_token
+from app.auth.schemas import Token
 
 pwd_context = CryptContext(schemes = ["bcrypt"], deprecated = "auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
@@ -12,11 +14,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 async def verify_password(plain_password, hashed_password) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-async def get_password_hash(password) -> str:
+async def hash_password(password) -> str:
     return pwd_context.hash(password)
 
 async def auth_user(username: str, password: str) -> User | None:
-    user = get_user(username)
+    user = await get_user(username)
 
     if not user:
         return None
@@ -26,13 +28,24 @@ async def auth_user(username: str, password: str) -> User | None:
     return user
 
 async def get_user(username: str) -> User | None:
-    db = get_db_session()
-    user = await db.execute(select(User).where(User.username == username))
-    return user.scalars().one_or_none()
+    async with get_db_session() as db:
+      user = await db.execute(select(User).where(User.username == username))
+      return user.scalars().one_or_none()
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
-    pass
+    payload = decode_access_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid access token")
+    
+    if not payload.username:
+        raise HTTPException(status_code=401, detail="Token missing username")
+
+    user = await get_user(payload.username)
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+
+    return user
 
 async def validate_role(role: str | None):
     if not role or role not in Settings.PERMITED_ROLES:
-        raise HTTPException(status_code=401, detail="Role is invalid")
+        raise HTTPException(status_code=403, detail="Role is invalid")
