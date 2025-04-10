@@ -5,6 +5,7 @@ from sqlalchemy import select
 
 from app.database import get_db_session
 from app.models.users import User
+from app.schemas.tokens import Token
 from app.auth.jwt import decode_access_token
 
 pwd_context = CryptContext(schemes = ["bcrypt"], deprecated = "auto")
@@ -36,7 +37,7 @@ async def get_user(username: str) -> User | None:
     return user.scalars().one_or_none()
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
-    payload = decode_access_token(token)
+    payload: Token = decode_access_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid access token")
     
@@ -49,7 +50,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
 
     return user
 
-async def require_role(*roles: str):
+def require_role(*roles: str):
     async def role_checker(request: Request):
         token = request.cookies.get("access_token")
         if not token:
