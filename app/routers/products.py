@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 from sqlalchemy import select
 from typing import Annotated
 
@@ -20,7 +21,7 @@ async def get_products(db: AsyncSession = Depends(get_db_session),
                         limit: Annotated[int, Query(ge=1, le=50)] = 10,
                         ) -> list[ProductS]:
     
-  query = select(Product)
+  query = select(Product).options(joinedload(Product.category), joinedload(Product.brand))
 
   if name:
     query = query.where(Product.name.ilike(f"%{name}%"))

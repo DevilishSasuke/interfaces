@@ -8,6 +8,7 @@ if TYPE_CHECKING:
   from app.models.categories import Category
   from app.models.brands import Brand
   from app.models.images import Image
+  from app.models.purchases import Purchase
 
 class Product(Base):
   __tablename__ = "products"
@@ -22,3 +23,4 @@ class Product(Base):
   images: Mapped[list["Image"]] = relationship("Image", back_populates="product")
   category: Mapped["Category"] = relationship("Category", back_populates="products")
   brand: Mapped["Brand"] = relationship("Brand", back_populates="products")
+  purchases: Mapped["Purchase"] = relationship("Purchase", back_populates="product")

@@ -1,4 +1,6 @@
 from pydantic import BaseModel, ConfigDict
+from app.schemas.categories import CategoryBase
+from app.schemas.brands import BrandBase
 
 class ProductBase(BaseModel):
   name: str
@@ -10,6 +12,8 @@ class ProductBase(BaseModel):
 class ProductS(ProductBase):
   model_config = ConfigDict(from_attributes=True)
   id: int
+  category: CategoryBase
+  brand: BrandBase
 
 class ProductAdd(ProductBase):
   pass

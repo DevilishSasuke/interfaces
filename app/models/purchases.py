@@ -18,4 +18,4 @@ class Purchase(Base):
   quantity: Mapped[int] = mapped_column(Integer, default=1)
 
   user: Mapped["User"] = relationship("User", back_populates="purchases")
-  product: Mapped["Product"] = relationship("Brand")
+  product: Mapped["Product"] = relationship("Product", back_populates="purchases")
