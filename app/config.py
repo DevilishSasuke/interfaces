@@ -10,8 +10,8 @@ class Settings(BaseSettings):
   DB_PASSWORD: str
   SECRET_KEY: str
   ALGORITHM: str
-  ACCESS_TOKEN_EXPIRES_MIN: int = 60
-  REFRESH_TOKEN_EXPIRES_DAY: int = 5
+  ACCESS_TOKEN_EXPIRES_MIN: int
+  REFRESH_TOKEN_EXPIRES_DAY: int
   PERMITED_ROLES: List[str] = ["admin", "manager", "user"]
   model_config = SettingsConfigDict(
       env_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
