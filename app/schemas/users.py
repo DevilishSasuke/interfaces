@@ -11,6 +11,9 @@ class UserS(UserBase):
 class UserAdd(UserBase):
   password: str
 
+class UserUpd(UserBase):
+  password: str
+
 class UserLogin(BaseModel):
   username: str
   password: str

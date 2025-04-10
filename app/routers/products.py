@@ -6,6 +6,7 @@ from typing import Annotated
 from app.database import get_db_session
 from app.schemas.products import *
 from app.models.products import Product
+from app.auth.security import require_manager
 
 
 router = APIRouter(prefix='/products', tags=["Products"])
@@ -41,7 +42,9 @@ async def get_all_products(db: AsyncSession = Depends(get_db_session)) -> list[P
   return result.scalars().all()
 
 @router.post("/", summary="add new product")
-async def add_new_product(product: ProductAdd, db: AsyncSession = Depends(get_db_session)) -> ProductS:
+async def add_new_product(product: ProductAdd, 
+                          db: AsyncSession = Depends(get_db_session), 
+                          user = Depends(require_manager)) -> ProductS:
   db_product = Product(**product.model_dump())
   db.add(db_product)
   await db.commit()
@@ -49,11 +52,13 @@ async def add_new_product(product: ProductAdd, db: AsyncSession = Depends(get_db
   return db_product
 
 @router.put("/", summary="update product")
-async def update_product(product: ProductUpd, db: AsyncSession = Depends(get_db_session)) -> ProductS:
+async def update_product(product: ProductUpd, 
+                         db: AsyncSession = Depends(get_db_session), 
+                         user = Depends(require_manager)) -> ProductS:
   db_product = await db.get(Product, product.id)
 
   if not db_product:
-    raise HTTPException(status_code=404, detail="no such a product, can't update")
+    raise HTTPException(status_code=404, detail="No such a product, can't update")
   
   for field, value in product.model_dump().items():
     if field != "id":
@@ -64,12 +69,14 @@ async def update_product(product: ProductUpd, db: AsyncSession = Depends(get_db_
   return db_product
 
 @router.delete("/{product_id}", summary="delete some product")
-async def delete_product(product_id: int, db: AsyncSession = Depends(get_db_session)):
+async def delete_product(product_id: int, 
+                         db: AsyncSession = Depends(get_db_session), 
+                         user = Depends(require_manager)):
   db_product = await db.get(Product, product_id)
   product_name = db_product.name
 
   if not db_product:
-    raise HTTPException(status_code=404, detail="no such a product, can't update")
+    raise HTTPException(status_code=404, detail="Product not found")
   
   await db.delete(db_product)
   await db.commit()

@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy import select
@@ -48,3 +48,18 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         raise HTTPException(status_code=401, detail="User not found")
 
     return user
+
+async def require_role(*roles: str):
+    async def role_checker(request: Request):
+        token = request.cookies.get("access_token")
+        if not token:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+
+        payload = await decode_access_token(token)
+        if payload.role not in roles:
+            raise HTTPException(status_code=403, detail="Forbidden: insufficient permissions")
+
+    return role_checker
+
+require_manager = require_role("manager", "admin")
+require_admin = require_role("admin")

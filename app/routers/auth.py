@@ -50,7 +50,7 @@ async def register_user(user: UserAdd, db: AsyncSession = Depends(get_db_session
 async def refresh_token(request: Request, response: Response):
   refresh_token = request.cookies.get("refresh_token")
   if not refresh_token:
-    raise HTTPException(status_code=401, detail="refresh token was not found in cookies")
+    raise HTTPException(status_code=401, detail="Refresh token was not found in cookies")
   
   payload = await decode_refresh_token(refresh_token)
   user_data = {"sub": payload.username, "role": payload.role}

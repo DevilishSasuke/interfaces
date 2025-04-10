@@ -5,7 +5,7 @@ from sqlalchemy import select
 from app.database import get_db_session
 from app.schemas.images import *
 from app.models.images import Image
-
+from app.auth.security import require_manager
 
 router = APIRouter(prefix='/images', tags=["Images"])
 
@@ -15,7 +15,9 @@ async def get_all_images(db: AsyncSession = Depends(get_db_session)) -> list[Ima
   return result.scalars().all()
 
 @router.post("/", summary="add new image")
-async def add_new_image(image: ImageAdd, db: AsyncSession = Depends(get_db_session)) -> ImageS:
+async def add_new_image(image: ImageAdd, 
+                        db: AsyncSession = Depends(get_db_session), 
+                        user = Depends(require_manager)) -> ImageS:
   db_image = Image(**image.model_dump())
   db.add(db_image)
   await db.commit()
@@ -23,11 +25,13 @@ async def add_new_image(image: ImageAdd, db: AsyncSession = Depends(get_db_sessi
   return db_image
 
 @router.put("/", summary="update image")
-async def update_image(image: ImageUpd, db: AsyncSession = Depends(get_db_session)) -> ImageS:
+async def update_image(image: ImageUpd, 
+                       db: AsyncSession = Depends(get_db_session), 
+                       user = Depends(require_manager)) -> ImageS:
   db_image = await db.get(Image, image.id)
 
   if not db_image:
-    raise HTTPException(status_code=404, detail="no such a image, can't update")
+    raise HTTPException(status_code=404, detail="No such a image, can't update")
   
   for field, value in image.model_dump().items():
     if field != "id":
@@ -38,13 +42,15 @@ async def update_image(image: ImageUpd, db: AsyncSession = Depends(get_db_sessio
   return db_image
 
 @router.delete("/{image_id}", summary="delete some image")
-async def delete_image(image_id: int, db: AsyncSession = Depends(get_db_session)):
+async def delete_image(image_id: int, 
+                       db: AsyncSession = Depends(get_db_session), 
+                       user = Depends(require_manager)):
   db_image = await db.get(Image, image_id)
   img_path = db_image.path
   product_id = db_image.product_id
 
   if not db_image:
-    raise HTTPException(status_code=404, detail="no such a image, can't update")
+    raise HTTPException(status_code=404, detail="Image not found")
   
   await db.delete(db_image)
   await db.commit()
