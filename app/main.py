@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.routers import products, categories, \
-  brands, images, auth, users
+  brands, images, auth, users, purchases
 from app.database import init_db
 
 from fastapi import Depends, APIRouter
@@ -33,8 +33,9 @@ app.include_router(products.router)
 app.include_router(categories.router)
 app.include_router(brands.router)
 app.include_router(images.router)
-app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(purchases.router)
+app.include_router(auth.router)
 
 # тестирование авторизации через docs
 test_router = APIRouter(prefix='/profile', tags=["test"])

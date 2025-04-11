@@ -13,6 +13,7 @@ import DeleteProductPage from "./pages/crud/DeleteProductPage";
 import DeleteBrandPage from "./pages/crud/DeleteBrandPage";
 import DeleteCategoryPage from "./pages/crud/DeleteCategoryPage";
 import DeleteUserPage from "./pages/crud/DeleteUserPage";
+import DeletePurchasePage from "./pages/crud/DeletePurchasePage";
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
         <Route path="/users/add" element={<AddUserPage />} />
         <Route path="/users/upd/:username" element={<UpdateUserPage />} />
         <Route path="/users/del/:username" element={<DeleteUserPage />} />
+        <Route path="/purch/del/:purchaseId" element={<DeletePurchasePage />} />
       </Routes>
     </Router>
   );

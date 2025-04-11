@@ -54,11 +54,11 @@ def require_role(*roles: str):
     async def role_checker(request: Request):
         token = request.cookies.get("access_token")
         if not token:
-            raise HTTPException(status_code=401, detail="Not authenticated")
+            raise HTTPException(status_code=401, detail="Not authorized")
 
         payload = await decode_access_token(token)
         if payload.role not in roles:
-            raise HTTPException(status_code=403, detail="Forbidden: insufficient permissions")
+            raise HTTPException(status_code=403, detail="Forbidden")
 
     return role_checker
 

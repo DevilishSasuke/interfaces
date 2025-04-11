@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 from typing import Annotated
 
 from app.database import get_db_session
@@ -18,6 +19,22 @@ async def get_all_purchases(db: AsyncSession = Depends(get_db_session),
                          user = Depends(require_manager)) -> list[PurchaseS]:
   result = await db.execute(select(Purchase))
   return result.scalars().all()
+
+@router.get("/{purchase_id}", summary="get one purchase data")
+async def get_one_purchase(purchase_id: int, 
+                          db: AsyncSession = Depends(get_db_session)) -> PurchaseS:
+  result = await db.execute(
+        select(Purchase)
+        .options(
+            joinedload(Purchase.user),
+            joinedload(Purchase.product)
+        )
+        .where(Purchase.id == purchase_id)
+    )
+  db_purchase = result.scalar_one_or_none()
+  if not db_purchase:
+    raise HTTPException(status_code=404, detail="Purchase not found")
+  return db_purchase
 
 @router.post("/", summary="add new purchase")
 async def make_purchase(purchase: PurchaseAdd,
