@@ -7,12 +7,19 @@ from app.schemas.users import *
 from app.models.users import User
 from app.auth.security import require_admin, hash_password, get_user
 
-router = APIRouter(prefix='/users', tags=["Users"], dependencies=[Depends(require_admin)])
+router = APIRouter(prefix='/users', tags=["Users"]) #, dependencies=[Depends(require_admin)])
 
 @router.get("/", summary="get all users")
 async def get_all_users(db: AsyncSession = Depends(get_db_session)) -> list[UserS]:
   result = await db.execute(select(User))
   return result.scalars().all()
+
+@router.get("/{username}", summary="get one user data")
+async def get_one_user(username: str) -> UserS:
+  user = await get_user(username)
+  if not user:
+    raise HTTPException(status_code=404, detail="User not found")
+  return user
 
 @router.post("/", summary="add new user")
 async def add_new_user(user: UserAdd, 
@@ -40,13 +47,12 @@ async def update_user(user: UserUpd,
   if not db_user:
     raise HTTPException(status_code=404, detail="User not found")
   
-  if user.username:
-    db_user.username = user.username
   if user.password:
     db_user.password = await hash_password(user.password)
   if user.role:
     db_user.role = user.role 
 
+  db.add(db_user)
   await db.commit()
   await db.refresh(db_user)
   return db_user

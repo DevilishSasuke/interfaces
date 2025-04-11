@@ -65,6 +65,7 @@ async def update_product(product: ProductUpd,
     if field != "id":
       setattr(db_product, field, value)
 
+  db.add(db_product)
   await db.commit()
   await db.refresh(db_product)
   return db_product

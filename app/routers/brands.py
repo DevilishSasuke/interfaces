@@ -37,6 +37,7 @@ async def update_brand(brand: BrandUpd,
     if field != "id":
       setattr(db_brand, field, value)
 
+  db.add(db_brand)
   await db.commit()
   await db.refresh(db_brand)
   return db_brand

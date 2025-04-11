@@ -37,6 +37,7 @@ async def update_category(category: CategoryUpd,
     if field != "id":
       setattr(db_category, field, value)
 
+  db.add(db_category)
   await db.commit()
   await db.refresh(db_category)
   return db_category

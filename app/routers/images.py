@@ -37,6 +37,7 @@ async def update_image(image: ImageUpd,
     if field != "id":
       setattr(db_image, field, value)
 
+  db.add(db_image)
   await db.commit()
   await db.refresh(db_image)
   return db_image

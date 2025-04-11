@@ -52,6 +52,7 @@ async def update_purchase(purchase: PurchaseUpd,
   if purchase.quantity:
     db_purchase.quantity = purchase.quantity
 
+  db.add(db_purchase)
   await db.commit()
   await db.refresh(db_purchase)
   return db_purchase
