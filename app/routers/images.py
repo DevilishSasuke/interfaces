@@ -33,9 +33,7 @@ async def update_image(image: ImageUpd,
   if not db_image:
     raise HTTPException(status_code=404, detail="No such a image, can't update")
   
-  for field, value in image.model_dump().items():
-    if field != "id":
-      setattr(db_image, field, value)
+  db_image.path = image.path
 
   db.add(db_image)
   await db.commit()

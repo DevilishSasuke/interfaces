@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  TextField, Button, Container, Typography,
-  FormControl, InputLabel, Select, MenuItem
-} from "@mui/material";
+import { TextField, Button, Container, Typography, 
+  MenuItem, Select, InputLabel, FormControl } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddProduct = () => {
+const UpdateProduct = () => {
+  const { productId } = useParams();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [price, setPrice] = useState("");
@@ -14,9 +15,20 @@ const AddProduct = () => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
 
-
   useEffect(() => {
-    axios.get("http://localhost:8000/categories/")
+    axios
+      .get(`http://localhost:8000/products/${productId}`)
+      .then((response) => {
+        const product = response.data;
+        setName(product.name);
+        setDesc(product.desc);
+        setPrice(product.price);
+        setCategoryId(product.category_id);
+        setBrandId(product.brand_id);
+      })
+      .catch((error) => console.error("Error loading product", error));
+
+      axios.get("http://localhost:8000/categories/")
       .then(res => setCategories(res.data))
       .catch(err => console.error("Error loading categories", err));
 
@@ -24,7 +36,7 @@ const AddProduct = () => {
       .then(res => setBrands(res.data))
       .catch(err => console.error("Error loading brands", err));
 
-  }, []);
+  }, [productId]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -34,7 +46,7 @@ const AddProduct = () => {
       return;
     }
 
-    const newProduct = {
+    const updatedProduct = {
       name,
       desc,
       price: parseFloat(price),
@@ -43,25 +55,30 @@ const AddProduct = () => {
     };
 
     axios
-      .post("http://localhost:8000/products/", newProduct)
-      .then((response) => alert("Товар добавлен"))
-      .catch((error) => console.error("Error, product not added ", error));
+      .put("http://localhost:8000/products/", updatedProduct)
+      .then((response) => {
+        alert("Товар обновлен");
+        navigate("/products/");
+      })
+      .catch((error) => console.error("Error updating product", error));
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Typography variant="h6" sx={{ mb: 2 }}>Добавить новый товар</Typography>
+    <Container>
+      <Typography variant="h6" sx={{ mb: 2 }}>Обновление товара</Typography>
       <form onSubmit={handleSubmit}>
         <TextField
           label="Название"
+          variant="outlined"
           fullWidth
           sx={{ mb: 2 }}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        
+
         <TextField
           label="Описание"
+          variant="outlined"
           fullWidth
           sx={{ mb: 2 }}
           value={desc}
@@ -109,11 +126,10 @@ const AddProduct = () => {
             ))}
           </Select>
         </FormControl>
-
-        <Button type="submit" variant="contained">Добавить товар</Button>
+        <Button type="submit" variant="contained">Обновить товар</Button>
       </form>
     </Container>
   );
 };
 
-export default AddProduct;
+export default UpdateProduct;

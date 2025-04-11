@@ -37,9 +37,27 @@ async def get_products(db: AsyncSession = Depends(get_db_session),
   result = await db.execute(query)
   return result.scalars().all()
 
+@router.get("/{product_id}", summary="get one product data")
+async def get_one_product(product_id: int, 
+                          db: AsyncSession = Depends(get_db_session)) -> ProductS:
+  result = await db.execute(
+        select(Product)
+        .options(
+            joinedload(Product.category),
+            joinedload(Product.brand)
+        )
+        .where(Product.id == product_id)
+    )
+  db_product = result.scalar_one_or_none()
+  if not db_product:
+    raise HTTPException(status_code=404, detail="Product not found")
+  return db_product
+
 @router.get("/all", summary="get all products")
 async def get_all_products(db: AsyncSession = Depends(get_db_session)) -> list[ProductS]:
-  result = await db.execute(select(Product))
+  result = await db.execute(select(Product)
+                            .options(joinedload(Product.category), 
+                                     joinedload(Product.brand)))
   return result.scalars().all()
 
 @router.post("/", summary="add new product")

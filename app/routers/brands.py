@@ -14,6 +14,18 @@ async def get_all_brands(db: AsyncSession = Depends(get_db_session)) -> list[Bra
   result = await db.execute(select(Brand))
   return result.scalars().all()
 
+@router.get("/{brand_name}", summary="get one brand data")
+async def get_one_brand(brand_name: str, 
+                       db: AsyncSession = Depends(get_db_session)) -> BrandS:
+  result = await db.execute(
+        select(Brand)
+        .where(Brand.name == brand_name)
+    )
+  db_brand = result.scalar_one_or_none()
+  if not db_brand:
+    raise HTTPException(status_code=404, detail="Brand not found")
+  return db_brand
+
 @router.post("/", summary="add new brand")
 async def add_new_brand(brand: BrandAdd, 
                         db: AsyncSession = Depends(get_db_session), 
@@ -33,9 +45,7 @@ async def update_brand(brand: BrandUpd,
   if not db_brand:
     raise HTTPException(status_code=404, detail="No such a brand, can't update")
   
-  for field, value in brand.model_dump().items():
-    if field != "id":
-      setattr(db_brand, field, value)
+  db_brand.name = brand.name
 
   db.add(db_brand)
   await db.commit()

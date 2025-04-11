@@ -17,7 +17,7 @@ const UpdateUser = () => {
         const user = response.data;
         setRole(user.role);
       })
-      .catch((error) => console.error("Ошибка при загрузке пользователя", error));
+      .catch((error) => console.error("Error loading user", error));
   }, [username]);
 
   const handleSubmit = (event) => {
@@ -28,25 +28,20 @@ const UpdateUser = () => {
       role,
     };
 
-    if (password) {
-      updatedUser.password = password;
-    }
-    else {
-      updatedUser.password = "";
-    }
+    updatedUser.password = password ? password : "";
 
     axios
       .put(`http://localhost:8000/users/`, updatedUser)
       .then((response) => {
         alert("Данные пользователя обновлены");
-        navigate("/users");
+        navigate("/users/");
       })
       .catch((error) => console.error("Error, user not updated", error));
   };
 
   return (
     <Container>
-      <Typography variant="h6" sx={{ mb: 2 }}>Обновить данные пользователя</Typography>
+      <Typography variant="h6" sx={{ mb: 2 }}>Обновление данных пользователя</Typography>
       <form onSubmit={handleSubmit}>
         <TextField
           label="Имя пользователя"
