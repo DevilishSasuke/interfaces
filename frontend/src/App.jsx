@@ -1,5 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import Header from "./components/Header.jsx"
+
+
+// all crud pages 
 import ProductsPage from "./pages/ProductsPage";
 import AddProductPage from "./pages/crud/AddProductPage";
 import AddBrandPage from "./pages/crud/AddBrandPage";
@@ -19,6 +24,7 @@ import DeletePurchasePage from "./pages/crud/DeletePurchasePage";
 function App() {
   return (
     <Router>
+      <Header />
       <Routes>
         <Route path="/" element={<ProductsPage />} />
         <Route path="/products/add" element={<AddProductPage />} />
