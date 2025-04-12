@@ -24,7 +24,7 @@ const DeleteUser = () => {
 
   const handleDelete = () => {
     axios
-      .delete(`http://localhost:8000/users/${username}`)
+      .delete(`http://localhost:8000/users/${user.id}`)
       .then(() => {
         alert("Пользователь удалён");
         navigate("/users/");

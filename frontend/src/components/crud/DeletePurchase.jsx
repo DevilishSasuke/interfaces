@@ -14,7 +14,7 @@ const DeletePurchase = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/purchase/${purchaseId}`)
+      .get(`http://localhost:8000/purchases/${purchaseId}`)
       .then((response) => {
         setPurchase(response.data)
       })
@@ -26,7 +26,7 @@ const DeletePurchase = () => {
 
   const handleDelete = () => {
     axios
-      .delete(`http://localhost:8000/purchase/${purchaseId}`)
+      .delete(`http://localhost:8000/purchases/${purchaseId}`)
       .then(() => {
         alert("Запись о покупке удалена");
         navigate("/");

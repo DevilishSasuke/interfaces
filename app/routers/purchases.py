@@ -12,12 +12,16 @@ from app.models.users import User
 from app.auth.security import require_manager, get_current_user
 
 
-router = APIRouter(prefix="/purchase", tags=["Purchase"])
+router = APIRouter(prefix="/purchases", tags=["Purchase"])
 
 @router.get("/", summary="get all purchases")
 async def get_all_purchases(db: AsyncSession = Depends(get_db_session), 
                          user = Depends(require_manager)) -> list[PurchaseS]:
-  result = await db.execute(select(Purchase))
+  result = await db.execute(select(Purchase)
+                            .options(
+                              joinedload(Purchase.user),
+                              joinedload(Purchase.product)
+                              ))
   return result.scalars().all()
 
 @router.get("/{purchase_id}", summary="get one purchase data")
