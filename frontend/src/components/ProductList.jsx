@@ -28,6 +28,20 @@ const ProductList = () => {
       .catch(error => console.error("Error loading products", error));
   }, [page, limit, search, minPrice, maxPrice]);
 
+  const handlePurchase = async (productId) => {
+    try {
+      await axiosInstance.post("http://localhost:8000/purchases/", {
+        product_id: productId,
+        quantity: 1,
+      });
+      alert("Покупка успешно оформлена");
+    } catch (error) {
+      console.error("Error creating purchase ", error);
+      alert("Ошибка при покупке");
+    }
+  }
+
+
   return (
     <TableContainer component={Paper} sx={{ mt: 4 }}>
       <Typography variant="h6" sx={{ p: 2 }}>Список товаров</Typography>
@@ -97,7 +111,7 @@ const ProductList = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => alert(`Приобретение товара: ${product.name}`)}>
+                  onClick={() => handlePurchase(product.id)}>
                   Приобрести
                 </Button>
               </TableCell>

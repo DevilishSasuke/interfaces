@@ -17,5 +17,5 @@ class Purchase(Base):
   product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
   quantity: Mapped[int] = mapped_column(Integer, default=1)
 
-  user: Mapped["User"] = relationship("User", back_populates="purchases")
-  product: Mapped["Product"] = relationship("Product", back_populates="purchases")
+  user: Mapped["User"] = relationship("User", back_populates="purchases", lazy="selectin")
+  product: Mapped["Product"] = relationship("Product", back_populates="purchases", lazy="selectin")
