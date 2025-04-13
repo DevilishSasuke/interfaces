@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Header from "./components/Header.jsx"
 
+import LoginPage from "./pages/auth/LoginPage.jsx";
+import RegisterPage from "./pages/auth/RegisterPage.jsx";
 
 // all crud pages 
 import ProductsPage from "./pages/ProductsPage";
@@ -25,6 +27,39 @@ import ManageCategoriesPage from "./pages/manage/ManagecategoriesPage.jsx";
 import ManageUsersPage from "./pages/manage/ManageUsersPage.jsx";
 import ManagePurchasesPage from "./pages/manage/ManagePurchasesPage.jsx";
 
+import AuthRoute from "./components/auth/AuthRoute.jsx";
+import ManagerRoute from "./components/auth/ManagerRoute.jsx";
+import AdminRoute from "./components/auth/AdminRoute.jsx";
+
+const managerRoutes = [
+  { path: "/products", element: <ManageProductsPage /> },
+  { path: "/products/add", element: <AddProductPage /> },
+  { path: "/products/upd/:productId", element: <UpdateProductPage /> },
+  { path: "/products/del/:productId", element: <DeleteProductPage /> },
+
+  { path: "/brands", element: <ManageBrandsPage /> },
+  { path: "/brands/add", element: <AddBrandPage /> },
+  { path: "/brands/upd/:brandName", element: <UpdateBrandPage /> },
+  { path: "/brands/del/:brandName", element: <DeleteBrandPage /> },
+
+  { path: "/cats", element: <ManageCategoriesPage /> },
+  { path: "/cats/add", element: <AddCategoryPage /> },
+  { path: "/cats/upd/:categoryName", element: <UpdateCategoryPage /> },
+  { path: "/cats/del/:categoryName", element: <DeleteCategoryPage /> },
+
+  { path: "/purch", element: <ManagePurchasesPage /> },
+  { path: "/purch/del/:purchaseId", element: <DeletePurchasePage /> },
+];
+
+const adminRoutes= [
+  { path: "/users", element: <ManageUsersPage /> },
+  { path: "/users/add", element: <AddUserPage /> },
+  { path: "/users/upd/:username", element: <UpdateUserPage /> },
+  { path: "/users/del/:username", element: <DeleteUserPage /> },
+];
+
+const authRoutes = [];
+
 
 function App() {
   return (
@@ -32,24 +67,25 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<ProductsPage />} />
-        <Route path="/products" element={<ManageProductsPage />} />
-        <Route path="/products/add" element={<AddProductPage />} />
-        <Route path="/products/upd/:productId" element={<UpdateProductPage />} />
-        <Route path="/products/del/:productId" element={<DeleteProductPage />} />
-        <Route path="/brands" element={<ManageBrandsPage />} />
-        <Route path="/brands/add" element={<AddBrandPage />} />
-        <Route path="/brands/upd/:brandName" element={<UpdateBrandPage />} />
-        <Route path="/brands/del/:brandName" element={<DeleteBrandPage />} />
-        <Route path="/cats" element={<ManageCategoriesPage />} />
-        <Route path="/cats/add" element={<AddCategoryPage />} />
-        <Route path="/cats/upd/:categoryName" element={<UpdateCategoryPage />} />
-        <Route path="/cats/del/:categoryName" element={<DeleteCategoryPage />} />
-        <Route path="/users" element={<ManageUsersPage />} />
-        <Route path="/users/add" element={<AddUserPage />} />
-        <Route path="/users/upd/:username" element={<UpdateUserPage />} />
-        <Route path="/users/del/:username" element={<DeleteUserPage />} />
-        <Route path="/purch" element={<ManagePurchasesPage />} />
-        <Route path="/purch/del/:purchaseId" element={<DeletePurchasePage />} />
+
+        {managerRoutes.map(({ path, element }) => (
+          <Route path={path} element=
+          {<ManagerRoute> {element} </ManagerRoute>}
+          />))}
+
+        {adminRoutes.map(({ path, element }) => (
+          <Route path={path} element=
+          {<AdminRoute> {element} </AdminRoute>}
+          />))}
+
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {authRoutes.map(({ path, element }) => (
+          <Route path={path} element=
+          {<AuthRoute> {element} </AuthRoute>}
+          />))}
+
       </Routes>
     </Router>
   );

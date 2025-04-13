@@ -22,12 +22,12 @@ async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depen
   
   user_data = {"sub": user.username, "role": user.role}
   access_token = await create_access_token(user_data)
-  refresh_token = await create_access_token(user_data)
+  refresh_token = await create_refresh_token(user_data)
 
   set_cookies(response, "access_token", access_token, settings.ACCESS_TOKEN_EXPIRES_MIN * 60)
   set_cookies(response, "refresh_token", refresh_token, settings.REFRESH_TOKEN_EXPIRES_DAY * 24 * 60 * 60)
 
-  return {"access_token": access_token, "refresh_token": refresh_token}
+  return { "access_token": access_token, "token_type": "bearer"}
 
 @router.post("/register", summary="Register new user")
 async def register_user(user: UserAdd, db: AsyncSession = Depends(get_db_session)) -> UserS:
@@ -56,7 +56,7 @@ async def refresh_token(request: Request, response: Response):
   user_data = {"sub": payload.username, "role": payload.role}
   
   new_access_token = await create_access_token(user_data)
-  new_refresh_token = await create_access_token(user_data)
+  new_refresh_token = await create_refresh_token(user_data)
 
   set_cookies(response, "access_token", new_access_token, settings.ACCESS_TOKEN_EXPIRES_MIN * 60)
   set_cookies(response, "refresh_token", new_refresh_token, settings.REFRESH_TOKEN_EXPIRES_DAY * 24 * 60 * 60)
@@ -74,8 +74,8 @@ async def set_cookies(response: Response, key: str, value, max_age):
     key=key,
     value=value,
     httponly=True,
-    secure=True,
-    samesite="Strict",
+    secure=False,
+    samesite="Lax",
     max_age = max_age
     )
   

@@ -5,7 +5,8 @@ from sqlalchemy import select
 from app.database import get_db_session
 from app.schemas.users import *
 from app.models.users import User
-from app.auth.security import require_admin, hash_password, get_user
+from app.auth.security import require_admin, \
+  hash_password, get_user, get_current_user
 
 router = APIRouter(prefix='/users', tags=["Users"]) #, dependencies=[Depends(require_admin)])
 
@@ -13,6 +14,10 @@ router = APIRouter(prefix='/users', tags=["Users"]) #, dependencies=[Depends(req
 async def get_all_users(db: AsyncSession = Depends(get_db_session)) -> list[UserS]:
   result = await db.execute(select(User))
   return result.scalars().all()
+
+@router.get("/me", summary="get current user")
+async def get_me(current_user: User = Depends(get_current_user)):
+  return current_user
 
 @router.get("/{username}", summary="get one user data")
 async def get_one_user(username: str) -> UserS:

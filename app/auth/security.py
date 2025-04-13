@@ -36,8 +36,12 @@ async def get_user(username: str) -> User | None:
     
     return user.scalars().one_or_none()
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
-    payload: Token = decode_access_token(token)
+async def get_current_user(request: Request) -> User:
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authorized")
+
+    payload: Token = await decode_access_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid access token")
     
