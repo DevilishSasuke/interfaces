@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Container, Typography, Button, Dialog, DialogTitle,
@@ -13,7 +13,7 @@ const DeletePurchase = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    axios
+    axiosInstance
       .get(`http://localhost:8000/purchases/${purchaseId}`)
       .then((response) => {
         setPurchase(response.data)
@@ -25,7 +25,7 @@ const DeletePurchase = () => {
   }, [purchaseId, navigate]);
 
   const handleDelete = () => {
-    axios
+    axiosInstance
       .delete(`http://localhost:8000/purchases/${purchaseId}`)
       .then(() => {
         alert("Запись о покупке удалена");

@@ -33,9 +33,9 @@ const ManagerMenu = () => {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={() => handleNavigate("/brands")}>Бренды</MenuItem>
-        <MenuItem onClick={() => handleNavigate("/categories")}>Категории</MenuItem>
+        <MenuItem onClick={() => handleNavigate("/cats")}>Категории</MenuItem>
         <MenuItem onClick={() => handleNavigate("/products")}>Товары</MenuItem>
-        <MenuItem onClick={() => handleNavigate("/orders")}>Покупки</MenuItem>
+        <MenuItem onClick={() => handleNavigate("/purch")}>Покупки</MenuItem>
       </Menu>
       </>
   );

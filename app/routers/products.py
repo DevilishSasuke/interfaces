@@ -26,6 +26,9 @@ async def get_products(db: AsyncSession = Depends(get_db_session),
   if name:
     query = query.where(Product.name.ilike(f"%{name}%"))
 
+  if min_price and max_price:
+    (min_price, max_price) = (min(min_price, max_price), max(min_price, max_price))
+
   if min_price:
     query = query.where(Product.price >= min_price)
 

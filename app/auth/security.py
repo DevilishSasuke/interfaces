@@ -36,8 +36,7 @@ async def get_user(username: str) -> User | None:
     
     return user.scalars().one_or_none()
 
-async def get_current_user(request: Request) -> User:
-    token = request.cookies.get("access_token")
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     if not token:
         raise HTTPException(status_code=401, detail="Not authorized")
 
@@ -55,8 +54,7 @@ async def get_current_user(request: Request) -> User:
     return user
 
 def require_role(*roles: str):
-    async def role_checker(request: Request):
-        token = request.cookies.get("access_token")
+    async def role_checker(token: str = Depends(oauth2_scheme)):
         if not token:
             raise HTTPException(status_code=401, detail="Not authorized")
 

@@ -6,7 +6,7 @@ const ManagerRoute = ({ children }) => {
 
   if (loading) return <div>Загрузка...</div>;
   if (!user) return <Navigate to="/login" />;
-  if (user.role !== "admin" || user.role !== "manager") return <div>Недостаточно прав</div>;
+  if (user.role !== "admin" && user.role !== "manager") return <div>{user.role}</div>;
 
   return children;
 };

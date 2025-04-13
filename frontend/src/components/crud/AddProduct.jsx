@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import {
   TextField, Button, Container, Typography,
   FormControl, InputLabel, Select, MenuItem
@@ -16,11 +16,11 @@ const AddProduct = () => {
 
 
   useEffect(() => {
-    axios.get("http://localhost:8000/categories/")
+    axiosInstance.get("http://localhost:8000/categories/")
       .then(res => setCategories(res.data))
       .catch(err => console.error("Error loading categories", err));
 
-    axios.get("http://localhost:8000/brands/")
+    axiosInstance.get("http://localhost:8000/brands/")
       .then(res => setBrands(res.data))
       .catch(err => console.error("Error loading brands", err));
 
@@ -42,7 +42,7 @@ const AddProduct = () => {
       brand_id: parseInt(brandId),
     };
 
-    axios
+    axiosInstance
       .post("http://localhost:8000/products/", newProduct)
       .then((response) => alert("Товар добавлен"))
       .catch((error) => console.error("Error, product not added ", error));

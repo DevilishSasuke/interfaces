@@ -24,8 +24,14 @@ async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depen
   access_token = await create_access_token(user_data)
   refresh_token = await create_refresh_token(user_data)
 
-  set_cookies(response, "access_token", access_token, settings.ACCESS_TOKEN_EXPIRES_MIN * 60)
-  set_cookies(response, "refresh_token", refresh_token, settings.REFRESH_TOKEN_EXPIRES_DAY * 24 * 60 * 60)
+  response.set_cookie(
+    key="refresh_token",
+    value=refresh_token,
+    httponly=True,
+    secure=True,
+    samesite="none",
+    max_age = settings.REFRESH_TOKEN_EXPIRES_DAY * 24 * 60 * 60
+    )
 
   return { "access_token": access_token, "token_type": "bearer"}
 
@@ -58,24 +64,20 @@ async def refresh_token(request: Request, response: Response):
   new_access_token = await create_access_token(user_data)
   new_refresh_token = await create_refresh_token(user_data)
 
-  set_cookies(response, "access_token", new_access_token, settings.ACCESS_TOKEN_EXPIRES_MIN * 60)
-  set_cookies(response, "refresh_token", new_refresh_token, settings.REFRESH_TOKEN_EXPIRES_DAY * 24 * 60 * 60)
+  response.set_cookie(
+    key="refresh_token",
+    value=new_refresh_token,
+    httponly=True,
+    secure=True,
+    samesite="none",
+    max_age = settings.REFRESH_TOKEN_EXPIRES_DAY * 24 * 60 * 60
+    )
   
-  return {"access_token": new_access_token, "refresh_token": new_refresh_token}
+  return {"access_token": new_access_token, "token_type": "bearer"}
 
 @router.post("/logout", summary="Logout and delete tokens from cookies")
 async def logout(response: Response):
-  response.delete_cookie("access_token")
   response.delete_cookie("refresh_token")
   return {"detail": "Successfully logged out"}
 
-async def set_cookies(response: Response, key: str, value, max_age):
-  response.set_cookie(
-    key=key,
-    value=value,
-    httponly=True,
-    secure=False,
-    samesite="Lax",
-    max_age = max_age
-    )
   

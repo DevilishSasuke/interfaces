@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { Container, TextField, Button, Typography } from "@mui/material";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
@@ -15,7 +15,7 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8000/auth/register", {
+      await axiosInstance.post("http://localhost:8000/auth/register", {
         username,
         password,
       });

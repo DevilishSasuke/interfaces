@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Container, Typography, Button, Dialog, DialogTitle,
@@ -13,7 +13,7 @@ const DeleteCategory = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    axios
+    axiosInstance
       .get(`http://localhost:8000/categories/${categoryName}`)
       .then((response) => setCategory(response.data))
       .catch((error) => {
@@ -23,7 +23,7 @@ const DeleteCategory = () => {
   }, [categoryName, navigate]);
 
   const handleDelete = () => {
-    axios
+    axiosInstance
       .delete(`http://localhost:8000/categories/${categoryName}`)
       .then(() => {
         alert("Категория удалена");

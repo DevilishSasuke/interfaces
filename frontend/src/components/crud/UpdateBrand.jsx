@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { TextField, Button, Container, Typography, 
-  MenuItem, Select, InputLabel, FormControl } from "@mui/material";
+import axiosInstance from "../axiosInstance";
+import { TextField, Button, Container, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateBrand = () => {
@@ -11,7 +10,7 @@ const UpdateBrand = () => {
   const [id, setId] = useState("");
 
   useEffect(() => {
-    axios
+    axiosInstance
       .get(`http://localhost:8000/brands/${brandName}`)
       .then((response) => {
         const brand = response.data;
@@ -29,7 +28,7 @@ const UpdateBrand = () => {
       name,
     };
 
-    axios
+    axiosInstance
       .put("http://localhost:8000/brands/", updatedBrand)
       .then((response) => {
         alert("Бренд обновлен");

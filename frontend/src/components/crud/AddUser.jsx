@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { TextField, Button, Container, Typography, 
   MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 
@@ -17,7 +17,7 @@ const AddUser = () => {
       role,
     };
 
-    axios
+    axiosInstance
       .post("http://localhost:8000/users/", newUser)
       .then((response) => {
         alert("Пользователь добавлен!");

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "./axiosInstance";
 import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Typography,
@@ -15,7 +15,7 @@ const ProductList = () => {
   const [maxPrice, setMaxPrice] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:8000/products/", {
+    axiosInstance.get("http://localhost:8000/products/", {
       params: {
         skip: (page - 1) * limit,
         limit: limit,

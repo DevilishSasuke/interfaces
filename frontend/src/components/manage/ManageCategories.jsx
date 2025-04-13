@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { Button, TableContainer, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,7 @@ const ManageCategories = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:8000/categories/")
+    axiosInstance.get("http://localhost:8000/categories/")
       .then(response => setCategories(response.data))
       .catch(error => console.error("Error loading categories", error));
   }, []);

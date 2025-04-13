@@ -1,10 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./components/auth/AuthContext.jsx";
 
 import Header from "./components/Header.jsx"
 
 import LoginPage from "./pages/auth/LoginPage.jsx";
 import RegisterPage from "./pages/auth/RegisterPage.jsx";
+import LogoutPage from "./pages/auth/LogoutPage.jsx";
 
 // all crud pages 
 import ProductsPage from "./pages/ProductsPage";
@@ -58,36 +60,38 @@ const adminRoutes= [
   { path: "/users/del/:username", element: <DeleteUserPage /> },
 ];
 
-const authRoutes = [];
+const authRoutes = [
+  { path: "/", element: <ProductsPage />},
+  { path: "/logout", element: <LogoutPage /> },
+];
 
 
 function App() {
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<ProductsPage />} />
+    <AuthProvider>
+      <Router>
+        <Header />
+        <Routes>
+          {managerRoutes.map(({ path, element }) => (
+            <Route path={path} element=
+            {<ManagerRoute> {element} </ManagerRoute>}
+            />))}
 
-        {managerRoutes.map(({ path, element }) => (
-          <Route path={path} element=
-          {<ManagerRoute> {element} </ManagerRoute>}
-          />))}
+          {adminRoutes.map(({ path, element }) => (
+            <Route path={path} element=
+            {<AdminRoute> {element} </AdminRoute>}
+            />))}
 
-        {adminRoutes.map(({ path, element }) => (
-          <Route path={path} element=
-          {<AdminRoute> {element} </AdminRoute>}
-          />))}
+          {authRoutes.map(({ path, element }) => (
+            <Route path={path} element=
+            {<AuthRoute> {element} </AuthRoute>}
+            />))}
 
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-
-        {authRoutes.map(({ path, element }) => (
-          <Route path={path} element=
-          {<AuthRoute> {element} </AuthRoute>}
-          />))}
-
-      </Routes>
-    </Router>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

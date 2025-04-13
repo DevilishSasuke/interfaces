@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { TextField, Button, Container, Typography } from "@mui/material";
 
 const AddBrand = () => {
@@ -12,7 +12,7 @@ const AddBrand = () => {
       name,
     };
 
-    axios
+    axiosInstance
       .post("http://localhost:8000/brands/", newBrand)
       .then((response) => {
         alert("Бренд добавлен");

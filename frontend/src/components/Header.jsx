@@ -25,8 +25,8 @@ const Header = () => {
             <Button color="inherit" onClick={() => navigate("/register")}>Регистрация</Button>
           </>)}
           {user && (<>
-            <Typography> {user.username} </Typography>
-            <Button color="inherit" onClick={() => navigate("/login")}>Выйти</Button>
+          <Button color="inherit">{user.username}</Button>
+          <Button color="inherit" onClick={() => navigate("/logout")}>Выйти</Button>
           </>)}
         </Box>
       </Toolbar>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { TextField, Button, Container, Typography, 
   MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,7 +16,7 @@ const UpdateProduct = () => {
   const [brands, setBrands] = useState([]);
 
   useEffect(() => {
-    axios
+    axiosInstance
       .get(`http://localhost:8000/products/${productId}`)
       .then((response) => {
         const product = response.data;
@@ -28,11 +28,11 @@ const UpdateProduct = () => {
       })
       .catch((error) => console.error("Error loading product", error));
 
-      axios.get("http://localhost:8000/categories/")
+    axiosInstance.get("http://localhost:8000/categories/")
       .then(res => setCategories(res.data))
       .catch(err => console.error("Error loading categories", err));
 
-    axios.get("http://localhost:8000/brands/")
+    axiosInstance.get("http://localhost:8000/brands/")
       .then(res => setBrands(res.data))
       .catch(err => console.error("Error loading brands", err));
 
@@ -54,7 +54,7 @@ const UpdateProduct = () => {
       brand_id: parseInt(brandId),
     };
 
-    axios
+    axiosInstance
       .put("http://localhost:8000/products/", updatedProduct)
       .then((response) => {
         alert("Товар обновлен");

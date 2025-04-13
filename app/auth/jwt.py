@@ -8,7 +8,7 @@ settings = Settings()
 
 # общая логика создания токенов
 async def create_token(user_data: dict, token_type: str, expires_delta: timedelta):
-    validate_role(user_data["role"])
+    await validate_role(user_data["role"])
     to_encode = user_data.copy()
 
     expire_time = datetime.now(timezone.utc) + expires_delta
@@ -38,7 +38,7 @@ async def decode_token(token: str, token_type: str) -> Token | None:
         if not username:
             raise HTTPException(status_code=401, detail="No such a user")
 
-        validate_role(role)  
+        await validate_role(role)  
       
         return Token(username=username, role=role, type=token_type)
     

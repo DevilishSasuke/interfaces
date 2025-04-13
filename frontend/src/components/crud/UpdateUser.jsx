@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { TextField, Button, Container, Typography, 
   MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,7 +11,7 @@ const UpdateUser = () => {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    axios
+    axiosInstance
       .get(`http://localhost:8000/users/${username}`)
       .then((response) => {
         const user = response.data;
@@ -30,7 +30,7 @@ const UpdateUser = () => {
 
     updatedUser.password = password ? password : "";
 
-    axios
+    axiosInstance
       .put(`http://localhost:8000/users/`, updatedUser)
       .then((response) => {
         alert("Данные пользователя обновлены");
