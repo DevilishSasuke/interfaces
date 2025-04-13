@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from fastapi.staticfiles import StaticFiles
 from app.routers import products, categories, \
-  brands, images, auth, users, purchases
+  brands, images, auth, users, purchases, notify_mng
 from app.database import init_db
 
 from fastapi import Depends, APIRouter
@@ -40,6 +40,7 @@ app.include_router(images.router)
 app.include_router(users.router)
 app.include_router(purchases.router)
 app.include_router(auth.router)
+app.include_router(notify_mng.router)
 
 
 # тестирование авторизации через docs

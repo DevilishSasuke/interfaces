@@ -9,6 +9,7 @@ from app.schemas.purchases import *
 from app.models.purchases import Purchase
 from app.models.products import Product
 from app.models.users import User
+from app.routers.notify_mng import notify_managers
 from app.auth.security import require_manager, get_current_user
 
 
@@ -57,6 +58,13 @@ async def make_purchase(purchase: PurchaseAdd,
   db.add(db_purchase)
   await db.commit()
   await db.refresh(db_purchase)
+
+  await notify_managers(
+        f"Покупка: {db_product.name} \
+        (Кол-во: {db_purchase.quantity}) \
+        пользователем {current_user.username}"
+    )
+
   return db_purchase
 
 @router.put("/", summary="update purchase")

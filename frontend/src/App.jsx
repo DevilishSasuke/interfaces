@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./components/auth/AuthContext.jsx";
+import { useAuth } from "./components/auth/AuthContext.jsx";
+import Notifications from "./components/Notifs.jsx";
 
 import Header from "./components/Header.jsx"
 
@@ -70,9 +71,11 @@ const authRoutes = [
 
 
 function App() {
+  const { user } = useAuth();
+
   return (
-    <AuthProvider>
       <Router>
+        { user?.role === "manager" && <Notifications />}
         <Header />
         <Routes>
           {managerRoutes.map(({ path, element }) => (
@@ -94,7 +97,6 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </Router>
-    </AuthProvider>
   );
 }
 
