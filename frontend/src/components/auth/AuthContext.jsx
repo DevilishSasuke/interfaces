@@ -6,6 +6,8 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -14,13 +16,14 @@ export const AuthProvider = ({ children }) => {
     if (!token) {
       setUser(null);
       setIsAuthenticated(false);
+      setIsAuthLoading(false);
       return;
     }
   
     axiosInstance.get("http://localhost:8000/users/me", { headers: { Authorization: `Bearer ${token}`, }, })
-      .then((res) => setUser(res.data))
-      .catch(() => setUser(null))
-      .finally(() => setIsAuthenticated(true));
+      .then((res) => { setUser(res.data); setIsAuthenticated(true); })
+      .catch(() => { setUser(null); setIsAuthenticated(false); })
+      .finally(() => setIsAuthLoading(false));
   }, []);
 
   const logout = async () => {
@@ -46,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, logout , setFlag, setUser_ }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, logout , setFlag, setUser_, isAuthLoading }}>
       {children}
     </AuthContext.Provider>
   );

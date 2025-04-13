@@ -2,9 +2,9 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
 const AuthRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, isAuthLoading } = useAuth();
 
-  if (loading) return <div>Загрузка...</div>;
+  if (isAuthLoading) return <div>Загрузка...</div>;
   if (!user) return <Navigate to="/login" />;
 
   return children;
