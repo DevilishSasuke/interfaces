@@ -38,7 +38,18 @@ const ManageProducts = () => {
         <TableBody>
           {products.map((product) => (
             <TableRow key={product.id}>
-              <TableCell>*coming soon*</TableCell>
+              <TableCell>
+              { product.images?.[0]?.path ?
+                (<img width="150px" height="150px" src={`http://localhost:8000${product.images[0].path}`} alt="Empty" />) :
+                (<Button 
+                onClick={() => navigate(`/img/add/${product.id}`)}
+                style={{
+                  width: "150px", height: "150px", border: "1px solid black",
+                  fontWeight: "bold", fontSize: "100px", color: "grey",
+                  }}>+</Button>)}
+              { console.log(product.id) }
+              { console.log(product.images.length) }
+              </TableCell>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.brand.name}</TableCell>
               <TableCell>{product.desc}</TableCell>

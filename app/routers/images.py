@@ -1,27 +1,70 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, \
+                    File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 from sqlalchemy import select
 
 from app.database import get_db_session
 from app.schemas.images import *
 from app.models.images import Image
+from app.models.products import Product
 from app.auth.security import require_manager
+
+import shutil
+import uuid
+import os
 
 router = APIRouter(prefix='/images', tags=["Images"])
 
 @router.get("/", summary="get all images")
 async def get_all_images(db: AsyncSession = Depends(get_db_session)) -> list[ImageS]:
-  result = await db.execute(select(Image))
+  query = select(Image) \
+            .options(joinedload(Image.product))
+  result = await db.execute(query)
   return result.scalars().all()
 
-@router.post("/", summary="add new image")
-async def add_new_image(image: ImageAdd, 
-                        db: AsyncSession = Depends(get_db_session), 
-                        user = Depends(require_manager)) -> ImageS:
-  db_image = Image(**image.model_dump())
+@router.get("/{image_id}", summary="get all images")
+async def get_all_images(image_id: int,
+                         db: AsyncSession = Depends(get_db_session)) -> list[ImageS]:
+  query = select(Image) \
+          .options(joinedload(Image.product)) \
+          .where(Image.id == image_id)
+
+  result = await db.execute(query)
+  return result.scalar_one_or_none()
+
+MAX_FILE_SIZE = 1024 * 1024 * 5
+@router.post("/upload")
+async def upload_img(file: UploadFile = File(...),
+                     product_id: int = Form(...),
+                     db: AsyncSession = Depends(get_db_session), 
+                     user = Depends(require_manager)) -> ImageBase:
+  if file.content_type not in ["image/jpeg", "image/png"]:
+    raise HTTPException(status_code=400, detail="Wrong file type")
+  
+  if file.size > MAX_FILE_SIZE:
+    raise HTTPException(status_code=400, detail="Wrong file size")
+  
+  db_product = (await db.get(Product, product_id))
+
+  if not db_product:
+    raise HTTPException(status_code=400, detail="Picked product doesn't exist")
+
+  filename = f"{str(uuid.uuid4())}.{file.filename.split('.')[-1]}"
+
+  dir_path = f"./static/images"
+
+  os.makedirs(dir_path, exist_ok=True)
+
+  with open(os.path.join(dir_path, filename), "xb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+  db_image = Image(path=f"/static/images/{filename}", product_id=product_id)
+
   db.add(db_image)
   await db.commit()
   await db.refresh(db_image)
+
   return db_image
 
 @router.put("/", summary="update image")

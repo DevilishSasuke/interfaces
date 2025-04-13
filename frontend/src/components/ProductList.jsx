@@ -78,7 +78,16 @@ const ProductList = () => {
         <TableBody>
           {products.map((product) => (
             <TableRow key={product.id}>
-              <TableCell>*coming soon*</TableCell>
+              <TableCell>
+              { product.images?.[0]?.path ?
+              (<img width="150px" height="150px" src={`http://localhost:8000${product.images[0].path}`} alt="Error" />) :
+              (<Button 
+              onClick={() => {}}
+              style={{
+                width: "150px", height: "150px", border: "1px solid black",
+                fontWeight: "bold", fontSize: "20px", color: "grey",
+              }}>No image</Button>)}
+              </TableCell>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.brand.name}</TableCell>
               <TableCell>{product.desc}</TableCell>
@@ -88,8 +97,7 @@ const ProductList = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => alert(`Приобретение товара: ${product.name}`)}
-                >
+                  onClick={() => alert(`Приобретение товара: ${product.name}`)}>
                   Приобрести
                 </Button>
               </TableCell>

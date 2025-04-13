@@ -21,7 +21,9 @@ async def get_products(db: AsyncSession = Depends(get_db_session),
                         limit: Annotated[int, Query(ge=1, le=50)] = 10,
                         ) -> list[ProductS]:
     
-  query = select(Product).options(joinedload(Product.category), joinedload(Product.brand))
+  query = select(Product).options(joinedload(Product.category), 
+                                  joinedload(Product.brand),
+                                  joinedload(Product.images))
 
   if name:
     query = query.where(Product.name.ilike(f"%{name}%"))
@@ -38,14 +40,15 @@ async def get_products(db: AsyncSession = Depends(get_db_session),
   query = query.limit(limit).offset(skip)
 
   result = await db.execute(query)
-  return result.scalars().all()
+  return result.unique().scalars().all()
 
 @router.get("/all", summary="get all products")
 async def get_all_products(db: AsyncSession = Depends(get_db_session)) -> list[ProductS]:
   result = await db.execute(select(Product)
                             .options(joinedload(Product.category), 
-                                     joinedload(Product.brand)))
-  return result.scalars().all()
+                                     joinedload(Product.brand),
+                                     joinedload(Product.images)))
+  return result.unique().scalars().all()
 
 @router.get("/{product_id}", summary="get one product data")
 async def get_one_product(product_id: int, 
@@ -54,11 +57,12 @@ async def get_one_product(product_id: int,
         select(Product)
         .options(
             joinedload(Product.category),
-            joinedload(Product.brand)
+            joinedload(Product.brand),
+            joinedload(Product.images)
         )
         .where(Product.id == product_id)
     )
-  db_product = result.scalar_one_or_none()
+  db_product = result.unique().scalar_one_or_none()
   if not db_product:
     raise HTTPException(status_code=404, detail="Product not found")
   return db_product

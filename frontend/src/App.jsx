@@ -14,6 +14,7 @@ import AddProductPage from "./pages/crud/AddProductPage";
 import AddBrandPage from "./pages/crud/AddBrandPage";
 import AddCategoryPage from "./pages/crud/AddCategoryPage";
 import AddUserPage from "./pages/crud/AddUserPage";
+import AddImagePage from "./pages/crud/AddImagePage.jsx";
 import UpdateProductPage from "./pages/crud/UpdateProductPage";
 import UpdateBrandPage from "./pages/crud/UpdateBrandPage";
 import UpdateCategoryPage from "./pages/crud/UpdateCategoryPage";
@@ -51,6 +52,8 @@ const managerRoutes = [
 
   { path: "/purch", element: <ManagePurchasesPage /> },
   { path: "/purch/del/:purchaseId", element: <DeletePurchasePage /> },
+
+  { path: "/img/add/:productId", element: <AddImagePage /> },
 ];
 
 const adminRoutes= [

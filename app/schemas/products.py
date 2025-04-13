@@ -1,6 +1,8 @@
+from typing import List
 from pydantic import BaseModel, ConfigDict
 from app.schemas.categories import CategoryBase
 from app.schemas.brands import BrandBase
+from app.schemas.images import ImageBase
 
 class ProductBase(BaseModel):
   name: str
@@ -14,6 +16,7 @@ class ProductS(ProductBase):
   id: int
   category: CategoryBase
   brand: BrandBase
+  images: List[ImageBase] | None = None
 
 class ProductAdd(ProductBase):
   pass

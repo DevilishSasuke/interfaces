@@ -6,7 +6,7 @@ from app.database import get_db_session
 from app.auth.jwt import *
 from app.auth.security import *
 from app.models.users import User
-from app.schemas.users import UserS, UserAdd
+from app.schemas.users import UserS, UserLogin
 from app.config import Settings
 
 
@@ -36,7 +36,7 @@ async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depen
   return { "access_token": access_token, "token_type": "bearer"}
 
 @router.post("/register", summary="Register new user")
-async def register_user(user: UserAdd, db: AsyncSession = Depends(get_db_session)) -> UserS:
+async def register_user(user: UserLogin, db: AsyncSession = Depends(get_db_session)) -> UserS:
   existing_user = await get_user(user.username)
   if existing_user:
     raise HTTPException(status_code=400, detail="Username already registered")

@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+
+from fastapi.staticfiles import StaticFiles
 from app.routers import products, categories, \
   brands, images, auth, users, purchases
 from app.database import init_db
@@ -29,6 +31,8 @@ app.add_middleware(
 def home():
   return "this is homepage"
 
+app.mount("/static", StaticFiles(directory='static'), name='static')
+
 app.include_router(products.router)
 app.include_router(categories.router)
 app.include_router(brands.router)
@@ -36,6 +40,7 @@ app.include_router(images.router)
 app.include_router(users.router)
 app.include_router(purchases.router)
 app.include_router(auth.router)
+
 
 # тестирование авторизации через docs
 test_router = APIRouter(prefix='/profile', tags=["test"])
