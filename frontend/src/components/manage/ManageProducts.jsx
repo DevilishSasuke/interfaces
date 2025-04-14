@@ -20,7 +20,7 @@ const ManageProducts = () => {
         justifyContent: "space-between", 
         alignItems: "center"}}>
         Управление товарами
-        <Button variant="contained" onClick={() => navigate("/cats/add")}>Добавить</Button>
+        <Button variant="contained" onClick={() => navigate("/products/add")}>Добавить</Button>
       </Typography>
 
       <Table>
@@ -57,7 +57,7 @@ const ManageProducts = () => {
               <TableCell>{product.category.name}</TableCell>
               <TableCell>
                 <Button onClick={() => navigate(`/products/upd/${product.id}`)}>Обновить</Button>
-                <Button color="error" onClick={() => navigate(`/cats/del/${product.id}`)}>Удалить</Button>
+                <Button color="error" onClick={() => navigate(`/products/del/${product.id}`)}>Удалить</Button>
               </TableCell>
             </TableRow>
           ))}
